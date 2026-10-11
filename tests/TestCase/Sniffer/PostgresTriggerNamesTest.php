@@ -35,7 +35,7 @@ final class PostgresTriggerNamesTest extends TestCase
             $sniffer->truncateDirtyTables();
             foreach ($tables as $table) {
                 $quoted = $connection->getDriver()->quoteIdentifier($table);
-                $this->assertEquals(0, $connection->execute("SELECT COUNT(*) FROM {$quoted}")->fetchColumn());
+                $this->assertEquals(0, $connection->execute("SELECT COUNT(*) FROM {$quoted}")->fetchColumn(0));
             }
             $sniffer->dropTriggers();
             $this->assertSame([], $sniffer->getTriggers());
