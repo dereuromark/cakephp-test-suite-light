@@ -60,6 +60,7 @@ class FixtureInjectorSkipTruncationTest extends TestCase
      * @dataProvider iterator
      * @param int $expected
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('iterator')]
     public function testTruncationSkipped(int $expected)
     {
         $country = $this->Countries->newEntity(['name' => 'foo']);

@@ -8,7 +8,7 @@ export DB_DRIVER=$DRIVER
 #######################
 #### Tests with non temporary sniffers
 #######################
-./vendor/bin/phpunit
+php -d apc.enable_cli=1 ./vendor/bin/phpunit
 
 #######################
 #### Tests with temporary sniffers
@@ -16,5 +16,5 @@ export DB_DRIVER=$DRIVER
 #######################
 if [ $DRIVER != 'Mysql' ]; then
   export SNIFFERS_IN_TEMP_MODE="true"
-  ./vendor/bin/phpunit
+  php -d apc.enable_cli=1 ./vendor/bin/phpunit
 fi

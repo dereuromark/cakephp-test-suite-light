@@ -35,6 +35,16 @@ class SqliteTriggerBasedTableSniffer extends BaseTriggerBasedTableSniffer
     public function truncateDirtyTables(): void
     {
         $tables = $this->getDirtyTables();
+        $expectedTriggers = array_map(
+            fn(string $table): string => $this->getTriggerName($table),
+            $this->getAllTablesExceptPhinxlogsAndCollector(true),
+        );
+        if (array_diff($expectedTriggers, $this->getTriggers())) {
+            $this->dropTriggers();
+            $this->createTriggers();
+            $this->markAllTablesAsDirty();
+            $tables = $this->getDirtyTables();
+        }
 
         // If a dirty table got dropped, it should be ignored
         $tables = array_intersect($tables, $this->getAllTables(true));

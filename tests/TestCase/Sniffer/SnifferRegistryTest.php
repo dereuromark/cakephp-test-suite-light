@@ -45,6 +45,7 @@ class SnifferRegistryTest extends TestCase
      * @param $sniffer
      * @dataProvider dataProviderTestLoadDefaultSniffer
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('dataProviderTestLoadDefaultSniffer')]
     public function testGetDefaultTableSniffers($driver, $sniffer)
     {
         $act = SnifferRegistry::getDefaultTableSniffers()[$driver];

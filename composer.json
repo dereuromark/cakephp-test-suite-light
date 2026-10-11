@@ -2,27 +2,30 @@
   "name": "vierge-noire/cakephp-test-suite-light",
   "description": "A test suite for CakePHP application based on Sql queries",
   "type": "cakephp-plugin",
-  "keywords": ["cakephp", "test"],
+  "keywords": [
+    "cakephp",
+    "test"
+  ],
   "authors": [
     {
       "name": "Nicolas Masson",
       "email": "nicolas@b-projects.tech"
     },
     {
-      "name": "Juan Pablo Ramìrez",
+      "name": "Juan Pablo Ram\u00ecrez",
       "email": "pabloelcolombiano@gmail.com"
     }
   ],
   "license": "MIT",
   "require": {
-    "php": ">=8.1",
-    "cakephp/cakephp": "^5.0",
+    "php": ">=8.5",
+    "cakephp/cakephp": "^6.0@dev",
     "ext-pdo": "*"
   },
   "require-dev": {
-    "cakephp/migrations": "^4.1.0",
+    "cakephp/migrations": "dev-fix/6.x-cakephp-compatibility",
     "josegonzalez/dotenv": "^4.0.0",
-    "phpunit/phpunit": "^10.1"
+    "phpunit/phpunit": "^13.0"
   },
   "autoload": {
     "psr-4": {
@@ -46,5 +49,7 @@
   },
   "config": {
     "sort-packages": true
-  }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
 }
