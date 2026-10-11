@@ -25,7 +25,7 @@ abstract class BaseTableSniffer
     protected $connection;
 
     /**
-     * @var array|null
+     * @var array<string>|null
      */
     protected $allTables;
 
@@ -37,14 +37,14 @@ abstract class BaseTableSniffer
 
     /**
      * Get all the dirty tables
-     * @return array
+     * @return array<string>
      */
     abstract public function getDirtyTables(): array;
 
     /**
      * Drop tables passed as a parameter
      * @deprecated table dropping is not handled by this package anymore.
-     * @param array $tables
+     * @param array<string> $tables
      * @return void
      */
     abstract public function dropTables(array $tables): void;
@@ -112,7 +112,7 @@ abstract class BaseTableSniffer
      *
      * @param string $query
      *
-     * @return array
+     * @return array<int, mixed>
      * @throws \Exception
      */
     public function fetchQuery(string $query): array
@@ -130,16 +130,39 @@ abstract class BaseTableSniffer
             throw new \Exception("Error in the connection '$name'. Is the database '$db' created and accessible?");
         }
 
-        foreach ($tables as $i => $val) {
-            $tables[$i] = $val[0] ?? $val['name'];
+        $values = [];
+        foreach ($tables as $val) {
+            if (!is_array($val)) {
+                throw new \UnexpectedValueException('Expected a database result row.');
+            }
+            $values[] = $val[0] ?? $val['name'];
         }
 
-        return $tables;
+        return $values;
+    }
+
+    /**
+     * Fetch database identifiers while preserving the scalar query API.
+     *
+     * @param string $query
+     * @return list<string>
+     */
+    protected function fetchIdentifierQuery(string $query): array
+    {
+        $identifiers = [];
+        foreach ($this->fetchQuery($query) as $identifier) {
+            if (!is_string($identifier)) {
+                throw new \UnexpectedValueException('Expected a database identifier.');
+            }
+            $identifiers[] = $identifier;
+        }
+
+        return $identifiers;
     }
 
     /**
      * @param string $glueBefore
-     * @param array  $array
+     * @param array<string> $array
      * @param string $glueAfter
      *
      * @return string
@@ -152,7 +175,7 @@ abstract class BaseTableSniffer
     /**
      * Get all tables except the phinx tables
      * * @param bool $forceFetch
-     * @return array
+     * @return array<string>
      */
     public function getAllTablesExceptPhinxlogs(bool $forceFetch = false): array
     {
@@ -167,7 +190,7 @@ abstract class BaseTableSniffer
 
     /**
      * @param bool $forceFetch
-     * @return array
+     * @return array<string>
      */
     public function getAllTables(bool $forceFetch = false): array
     {

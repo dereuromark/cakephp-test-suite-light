@@ -29,7 +29,7 @@ trait SqliteSnifferTrait
     {
         $triggerPrefix = BaseTriggerBasedTableSniffer::TRIGGER_PREFIX;
 
-        $triggers = $this->fetchQuery("
+        $triggers = $this->fetchIdentifierQuery("
             SELECT name FROM sqlite_master WHERE type = 'trigger' AND name LIKE '{$triggerPrefix}%'
             UNION
             SELECT name FROM sqlite_temp_master WHERE type = 'trigger' AND name LIKE '{$triggerPrefix}%'

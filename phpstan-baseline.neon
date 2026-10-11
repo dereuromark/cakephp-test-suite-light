@@ -22,7 +22,7 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'tableSniffer' on mixed\\.$#"
-			count: 2
+			count: 1
 			path: src/Sniffer/SnifferRegistry.php
 
 		-

@@ -3,9 +3,9 @@ includes:
 
 parameters:
     level: max
-    checkMissingIterableValueType: false
     bootstrapFiles:
         - tests/bootstrap.php
     paths:
+        - tests/TestCase/Sniffer/TableSnifferWithFixturesTest.php
         - src/
         - tests/TestApp

@@ -51,6 +51,17 @@ class PostgresTriggerBasedTableSniffer extends BaseTriggerBasedTableSniffer
     }
 
     /**
+     * PostgreSQL identifiers have a 63-byte limit.
+     *
+     * @param string $tableName
+     * @return string
+     */
+    protected function getTriggerName(string $tableName): string
+    {
+        return substr(parent::getTriggerName($tableName), 0, 63);
+    }
+
+    /**
      * @inheritDoc
      */
     public function createTriggers(): void
@@ -71,7 +82,7 @@ class PostgresTriggerBasedTableSniffer extends BaseTriggerBasedTableSniffer
                 ";
 
             $stmts[] = "                
-                CREATE TRIGGER {$this->getTriggerName($table)} AFTER INSERT ON \"{$table}\"                
+                CREATE TRIGGER \"{$this->getTriggerName($table)}\" AFTER INSERT ON \"{$table}\"
                 FOR EACH ROW
                     EXECUTE PROCEDURE mark_table_{$table}_as_dirty();                                                                                                                    
                 ";

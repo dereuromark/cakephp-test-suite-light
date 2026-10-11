@@ -28,10 +28,12 @@ trait PostgresSnifferTrait
     public function getTriggers(): array
     {
         $triggerPrefix = BaseTriggerBasedTableSniffer::TRIGGER_PREFIX;
-        $triggers = $this->fetchQuery("
+        $triggers = $this->fetchIdentifierQuery("
             SELECT tgname
             FROM pg_trigger
-            WHERE tgname LIKE '{$triggerPrefix}%'
+            JOIN pg_class ON pg_class.oid = pg_trigger.tgrelid
+            JOIN pg_namespace ON pg_namespace.oid = pg_class.relnamespace
+            WHERE pg_namespace.nspname = current_schema() AND tgname LIKE '{$triggerPrefix}%'
         ");
 
         foreach ($triggers as $k => $trigger) {
@@ -48,16 +50,17 @@ trait PostgresSnifferTrait
      */
     public function dropTriggers(): void
     {
-        $triggers = $this->getTriggers();
-        if (empty($triggers)) {
-            return;
-        }
-
-        foreach ($triggers as $trigger) {
-            $table = substr($trigger, strlen(BaseTriggerBasedTableSniffer::TRIGGER_PREFIX));
-            /** @var Connection $connection */
-            $connection = $this->getConnection();
-            $connection->execute("DROP TRIGGER {$trigger} ON \"{$table}\";");
+        $prefix = BaseTriggerBasedTableSniffer::TRIGGER_PREFIX;
+        $statements = $this->fetchIdentifierQuery("
+            SELECT format('DROP TRIGGER IF EXISTS %I ON %I.%I', trigger_name, event_object_schema, event_object_table)
+            FROM information_schema.triggers
+            WHERE left(trigger_name, length('{$prefix}')) = '{$prefix}'
+                AND trigger_schema = current_schema()
+        ");
+        /** @var Connection $connection */
+        $connection = $this->getConnection();
+        foreach ($statements as $statement) {
+            $connection->execute($statement);
         }
     }
 

@@ -44,7 +44,7 @@ abstract class BaseTriggerBasedTableSniffer extends BaseTableSniffer
 
     /**
      * Get triggers relative to the database dirty table collector
-     * @return array
+     * @return array<string>
      */
     abstract public function getTriggers(): array;
 
@@ -140,12 +140,12 @@ abstract class BaseTriggerBasedTableSniffer extends BaseTableSniffer
      * Find all tables where an insert happened
      * This also includes empty tables, where a delete
      * was performed after an insert
-     * @return array
+     * @return array<string>
      */
     public function getDirtyTables(): array
     {
         try {
-            return $this->fetchQuery("SELECT table_name FROM " . $this->collectorName());
+            return $this->fetchIdentifierQuery("SELECT table_name FROM " . $this->collectorName());
         } catch (\Throwable $e) {
             $this->init();
             return $this->getDirtyTables();
@@ -175,7 +175,7 @@ abstract class BaseTriggerBasedTableSniffer extends BaseTableSniffer
      * Fetch all tables, excluded from Phinx related and the dirty table collector.
      *
      * @param bool $forceFetch
-     * @return array
+     * @return array<string>
      */
     public function getAllTablesExceptPhinxlogsAndCollector(bool $forceFetch = false): array
     {

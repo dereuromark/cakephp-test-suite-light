@@ -30,7 +30,7 @@ use TestApp\Model\Table\CountriesTable;
 use TestApp\Test\Fixture\CitiesFixture;
 use TestApp\Test\Fixture\CountriesFixture;
 
-class TableSnifferWithFixturesTest extends TestCase
+final class TableSnifferWithFixturesTest extends TestCase
 {
     use ArrayComparerTrait;
     use ExpectedSchemaTestTrait;
@@ -45,26 +45,32 @@ class TableSnifferWithFixturesTest extends TestCase
     ];
 
     /**
-     * @var BaseTableSniffer
+     * @var BaseTriggerBasedTableSniffer
      */
-    public $TableSniffer;
+    public BaseTriggerBasedTableSniffer $TableSniffer;
 
     /**
      * @var CountriesTable
      */
-    public $Countries;
+    public CountriesTable $Countries;
 
     /**
      * @var CitiesTable
      */
-    public $Cities;
+    public CitiesTable $Cities;
 
     public function setUp(): void
     {
         parent::setUp();
-        $this->TableSniffer = SnifferRegistry::get('test');
-        $this->Countries = TableRegistry::getTableLocator()->get('Countries');
-        $this->Cities = TableRegistry::getTableLocator()->get('Cities');
+        $sniffer = SnifferRegistry::get('test');
+        $this->assertInstanceOf(BaseTriggerBasedTableSniffer::class, $sniffer);
+        $this->TableSniffer = $sniffer;
+        $countries = TableRegistry::getTableLocator()->get(CountriesTable::class);
+        $this->assertInstanceOf(CountriesTable::class, $countries);
+        $this->Countries = $countries;
+        $cities = TableRegistry::getTableLocator()->get(CitiesTable::class);
+        $this->assertInstanceOf(CitiesTable::class, $cities);
+        $this->Cities = $cities;
 
         $this->activateForeignKeysOnSqlite();
     }
@@ -83,7 +89,7 @@ class TableSnifferWithFixturesTest extends TestCase
      * Find dirty tables
      * Countries is dirty, Cities is empty
      */
-    public function testGetDirtyTables()
+    public function testGetDirtyTables(): void
     {
         $expected = [
             'countries',
@@ -98,7 +104,7 @@ class TableSnifferWithFixturesTest extends TestCase
     /**
      * This list will need to be maintained as new tables are created or removed
      */
-    public function testGetAllTables()
+    public function testGetAllTables(): void
     {
         $found = $this->TableSniffer->fetchAllTables();
         $expected = array_merge($this->getAllTables(), ['cake_migrations']);
@@ -109,7 +115,7 @@ class TableSnifferWithFixturesTest extends TestCase
         $this->assertArraysHaveSameContent($expected, $found);
     }
 
-    public function testGetAllTablesExceptPhinxlogs()
+    public function testGetAllTablesExceptPhinxlogs(): void
     {
         $found = $this->TableSniffer->getAllTablesExceptPhinxlogs(true);
         $expected = $this->getAllTables();
@@ -126,16 +132,16 @@ class TableSnifferWithFixturesTest extends TestCase
      * When: Country gets deleted
      * Then: Throw an error
      */
-    public function testThatForeignKeysConstrainWorksOnDelete()
+    public function testThatForeignKeysConstrainWorksOnDelete(): void
     {
         $this->expectException(\PDOException::class);
         // City with no country will not save
         $city = $this->createCity();
-        $country = $this->Countries->get($city->country_id);
+        $country = $this->Countries->get($city->get('country_id'));
         $this->Countries->delete($country);
     }
 
-    public function testTruncateDirtyTablesWithForeignKey()
+    public function testTruncateDirtyTablesWithForeignKey(): void
     {
         $this->createCity();
 
@@ -147,7 +153,7 @@ class TableSnifferWithFixturesTest extends TestCase
         );
     }
 
-    public function testGetTriggers()
+    public function testGetTriggers(): void
     {
         $found = $this->TableSniffer->getTriggers();
         $this->assertArraysHaveSameContent($this->allExpectedTriggers(), $found);

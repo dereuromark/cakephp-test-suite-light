@@ -95,7 +95,7 @@ class TriggerStrategy implements FixtureStrategyInterface
 
     /**
      * Get all connections used by the manager
-     * @return array
+     * @return array<string>
      */
     protected function getActiveConnections(): array
     {

@@ -28,7 +28,7 @@ trait MysqlSnifferTrait
      */
     public function getTriggers(): array
     {
-        $triggers = $this->fetchQuery("SHOW triggers");
+        $triggers = $this->fetchIdentifierQuery("SHOW triggers");
 
         foreach ($triggers as $k => $trigger) {
             if (strpos($trigger, BaseTriggerBasedTableSniffer::TRIGGER_PREFIX) !== 0) {

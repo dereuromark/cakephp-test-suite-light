@@ -115,6 +115,18 @@ class TableSnifferWithMigrationTest extends TestCase
         $this->assertSame([], $this->TableSniffer->getDirtyTables());;
     }
 
+    public function testNewMigrationTableIsTrackedDuringCleanup(): void
+    {
+        $this->assertSame(1, $this->countProducts());
+        $this->TableSniffer->truncateDirtyTables();
+        $this->assertContains('dts_products', $this->TableSniffer->getTriggers());
+        $this->assertSame(0, $this->countProducts());
+        $this->TableSniffer->getConnection()->insert('products', ['name' => 'After cleanup']);
+        $this->assertContains('products', $this->TableSniffer->getDirtyTables());
+        $this->TableSniffer->truncateDirtyTables();
+        $this->assertSame(0, $this->countProducts());
+    }
+
     public function testPopulateWithMigrationsWithRestart()
     {
         $tables = $this->TableSniffer->fetchAllTables();

@@ -99,6 +99,10 @@ class SnifferRegistry
         } else {
             try {
                 $driver = self::getConnection($connectionName)->config()['driver'];
+                if (!is_string($driver)) {
+                    $driver = '<invalid>';
+                    throw new \RuntimeException();
+                }
                 $snifferName = self::getDefaultTableSniffers()[$driver] ?? null;
                 if (is_null($snifferName)) {
                     throw new \RuntimeException();
@@ -109,12 +113,15 @@ class SnifferRegistry
                 throw new \PHPUnit\Framework\Exception($msg);
             }
         }
+        if (!is_string($snifferName)) {
+            throw new \PHPUnit\Framework\Exception('The table sniffer must be a class name.');
+        }
         return $snifferName;
     }
 
     /**
      * Table sniffers provided by the package
-     * @return array
+     * @return array<class-string, class-string<BaseTableSniffer>>
      */
     public static function getDefaultTableSniffers(): array
     {
