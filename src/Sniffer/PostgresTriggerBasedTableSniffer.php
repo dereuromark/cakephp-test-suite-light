@@ -26,6 +26,7 @@ class PostgresTriggerBasedTableSniffer extends BaseTriggerBasedTableSniffer
      */
     public function truncateDirtyTables(): void
     {
+        $this->ensureTriggers();
         $truncate = function() {
             /** @var Connection $connection */
             $connection = $this->getConnection();

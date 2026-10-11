@@ -1,6 +1,14 @@
 # cakephp-test-suite-light
 A fast test suite for CakePHP applications
 
+#### CakePHP 6 development branch
+
+This branch requires PHP 8.5 and CakePHP 6. The migration test suite currently
+uses `cakephp/migrations:dev-fix/6.x-cakephp-compatibility` until
+[upstream PR 1121](https://github.com/cakephp/migrations/pull/1121) is merged.
+Use the development branch in an application already configured for CakePHP 6
+and development dependencies. Stable releases below target earlier CakePHP versions.
+
 #### For CakePHP 5.x
 composer require --dev vierge-noire/cakephp-test-suite-light "^3.0"
 

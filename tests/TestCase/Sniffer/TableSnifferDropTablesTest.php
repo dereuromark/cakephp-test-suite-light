@@ -91,6 +91,20 @@ class TableSnifferDropTablesTest extends TestCase
         $this->assertSame([], $this->TableSniffer->fetchAllTables());
     }
 
+    public function testTrackingIsRestoredAfterDroppingAndRecreatingTables()
+    {
+        (new ConnectionHelper())->dropTables('test');
+        (new Migrations())->migrate(['connection' => 'test']);
+
+        $this->TableSniffer->truncateDirtyTables();
+        $this->assertContains('dts_countries', $this->TableSniffer->getTriggers());
+        $this->createCountry();
+        $this->assertContains('countries', $this->TableSniffer->getDirtyTables());
+        $this->assertSame(1, $this->Countries->find()->count());
+        $this->TableSniffer->truncateDirtyTables();
+        $this->assertSame(0, $this->Countries->find()->count());
+    }
+
     public function testDropWithForeignKeyCheckCities()
     {
         $this->activateForeignKeysOnSqlite();

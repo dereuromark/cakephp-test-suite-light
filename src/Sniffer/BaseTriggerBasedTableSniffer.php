@@ -153,6 +153,25 @@ abstract class BaseTriggerBasedTableSniffer extends BaseTableSniffer
     }
 
     /**
+     * Restore tracking after application tables have been dropped or created.
+     *
+     * @return void
+     */
+    protected function ensureTriggers(): void
+    {
+        $this->getDirtyTables();
+        $expectedTriggers = array_map(
+            fn(string $table): string => $this->getTriggerName($table),
+            $this->getAllTablesExceptPhinxlogsAndCollector(true),
+        );
+        if (array_diff($expectedTriggers, $this->getTriggers())) {
+            $this->dropTriggers();
+            $this->createTriggers();
+            $this->markAllTablesAsDirty();
+        }
+    }
+
+    /**
      * Fetch all tables, excluded from Phinx related and the dirty table collector.
      *
      * @param bool $forceFetch

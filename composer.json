@@ -2,17 +2,14 @@
   "name": "vierge-noire/cakephp-test-suite-light",
   "description": "A test suite for CakePHP application based on Sql queries",
   "type": "cakephp-plugin",
-  "keywords": [
-    "cakephp",
-    "test"
-  ],
+  "keywords": ["cakephp", "test"],
   "authors": [
     {
       "name": "Nicolas Masson",
       "email": "nicolas@b-projects.tech"
     },
     {
-      "name": "Juan Pablo Ram\u00ecrez",
+      "name": "Juan Pablo Ramìrez",
       "email": "pabloelcolombiano@gmail.com"
     }
   ],
@@ -45,7 +42,7 @@
     "sqlite": "bash run_tests.sh Sqlite",
     "phpstan": "./vendor/bin/phpstan analyse --memory-limit=-1",
     "phpstan-baseline": "./vendor/bin/phpstan --generate-baseline",
-    "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:~1.10 && mv composer.backup composer.json"
+    "stan-setup": "cp composer.json composer.backup && composer require --dev phpstan/phpstan:^2.1 && mv composer.backup composer.json"
   },
   "config": {
     "sort-packages": true

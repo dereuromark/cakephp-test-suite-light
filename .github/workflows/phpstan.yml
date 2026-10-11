@@ -8,6 +8,9 @@ on:
     branches:
       - '*'
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,19 +18,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1']
+        php-version: ['8.5']
 
     name: PHP ${{ matrix.php-version }}
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-version }}
-          extensions: mbstring, intl, apcu
-          ini-values: apc.enable_cli = 1
+          extensions: mbstring, intl
 
       - name: Update composer
         run: composer self-update
@@ -36,7 +40,7 @@ jobs:
         run: composer validate
 
       - name: Install composer
-        run: composer update --prefer-dist --no-progress --no-suggest --prefer-stable
+        run: composer update --prefer-dist --no-progress --prefer-stable
 
       - name: Install PHPStan
         run: composer stan-setup

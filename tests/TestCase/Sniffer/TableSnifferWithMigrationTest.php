@@ -104,9 +104,9 @@ class TableSnifferWithMigrationTest extends TestCase
 
     /**
      * Find dirty tables
-     * Since the table products was created
-     * after the setup of the sniffer triggers,
-     * it is not marked as dirty
+     * Before cleanup, products has no trigger because it was created
+     * after the sniffer started. The next cleanup installs tracking
+     * and clears the new table without requiring restart().
      */
     public function testPopulateWithMigrationsWithoutRestart()
     {
